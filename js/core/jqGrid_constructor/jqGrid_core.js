@@ -1715,7 +1715,7 @@ jqGrid$.prototype.context_menu = function() {
 			}
 			if (self.hasOwnProperty('contextMenuItems'))
 			{
-				if(Object.keys(self.contextMenuItems).length > 10)
+				if(Object.keys(self.contextMenuItems).length > 12)
 				{
 					self.contextMenuItems = {
 						grid_actions: {

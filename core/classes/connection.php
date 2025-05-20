@@ -36,7 +36,11 @@ class Connection extends Grid
 	{
 		try
 		{
-			$this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";", "", "");
+			// $this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";", "", "");			
+			// $this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";Encrypt = Optional;", "LocalAdmin", "QwertyPro789_");
+			// $this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";Encrypt = Optional;", "LocalAdmin2", "XcU9rYjtKL");
+			// $this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";Encrypt = Optional;", "sa", "QwertyPro789_");
+			$this->connection = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".$db.";Encrypt = Optional;", "", "");
 			$this->connection->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		}
 		catch(Exception $e)
@@ -48,7 +52,11 @@ class Connection extends Grid
 	{
 		try
 		{
-			$this->prm_conn = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".GLOBAL_DB.";", "", "");
+			// $this->prm_conn = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".GLOBAL_DB.";", "", "");
+			// $this->prm_conn = new PDO("sqlsrv:Server=" . SRV_NAME . ";Database=" . GLOBAL_DB . ";Encrypt = Optional;", "LocalAdmin", "QwertyPro789_");
+			// $this->prm_conn = new PDO("sqlsrv:Server=" . SRV_NAME . ";Database=" . GLOBAL_DB . ";Encrypt = Optional;", "LocalAdmin2", "XcU9rYjtKL");
+			// $this->prm_conn = new PDO("sqlsrv:Server=" . SRV_NAME . ";Database=" . GLOBAL_DB . ";Encrypt = Optional;", "sa", "QwertyPro789_");
+			$this->prm_conn = new PDO(DB_DRIVER.":server=".SRV_NAME.";database=".GLOBAL_DB.";Encrypt = Optional;", "", "");
 			$this->prm_conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 		}
 		catch(Exception $e)

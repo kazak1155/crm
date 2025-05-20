@@ -13,6 +13,8 @@ define('FILES_DIR',CORE_DIR.'file_system'.DS);
 
 define('TEMPLATES_DIR',CRM_ROOT.'templates'.DS);
 
+define('UPLOAD_DIR',CRM_ROOT.'upload'.DS);
+
 define('TEMPLATE_PLUGINS','plugins'.DS);
 
 define('TEMPLATES_CORE_DIR',TEMPLATES_DIR.'main'.DS);
@@ -23,7 +25,7 @@ define('CSS_DIR',CRM_ROOT.'CSS'.DS);
 
 define('JSON_DIR',CRM_ROOT.'JSON'.DS);
 
-define('SRV_NAME','localhost');
+define('SRV_NAME','192.168.1.3');
 
 define('GLOBAL_DB','srv');
 

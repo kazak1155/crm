@@ -6,6 +6,7 @@ class Grid extends Reference
 		if(!is_null($table))
 			$table = $table.'.';
 		$firstElem = true;
+		$qWhere = '';
 		if (empty($object->rules))
 		{
 			$searchMulti = $object->groups[0];
@@ -52,7 +53,6 @@ class Grid extends Reference
 						if (strlen(trim($rule->data)) == 0) $qWhere .= '('.$table.$rule->field.' IS NULL )';
 						else $qWhere .= '('.$table.$rule->field.' = '.$this->PDO_quote($rule->data).')';
 						break;
-					break;
 					case 'ne':
 						if (strlen(trim($rule->data)) == 0) $qWhere .= '('.$table.$rule->field.' IS NOT NULL'.')';
 						else $qWhere .= '('.$table.$rule->field.' <> '.$this->PDO_quote($rule->data).' OR '.$table.$rule->field.' IS NULL'.')';
@@ -90,6 +90,7 @@ class Grid extends Reference
 					$firstElem = false;
 				if(count((array)$rule->op) > 1)
 				{
+					$sub = new stdClass;
 					$sub->groups[0] = new stdClass;
 					$sub->groups[0]->groupOp = $object->rules[$key]->groupOps;
 					for($index = 0;$index < count($rule->op);$index++)
@@ -100,6 +101,7 @@ class Grid extends Reference
 						$sub->groups[0]->rules[$index]->data = $object->rules[$key]->data[$index];
 					}
 					$qWhere .= '('.$this->process_filters($sub).')';
+					
 					continue;
 				}
 				switch ($rule->op)
@@ -160,6 +162,7 @@ class Grid extends Reference
 				}
 			}
 		}
+		//print_pre($qWhere);
 		return $qWhere;
 	}
 	public function process_filters_v2(array $array)

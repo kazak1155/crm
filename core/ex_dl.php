@@ -20,7 +20,7 @@ if (!function_exists('str_contains')) {
 
 $haul = htmlspecialchars($_GET["haul"]);
 //echo htmlspecialchars($_GET["haul"]);
-define('QUERY_SPACE',' ');
+//define('QUERY_SPACE',' ');
 
 require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 //$Site->init_tmpl_connection();
@@ -28,32 +28,37 @@ require_once $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 $Core->query = "SELECT TOP 1 Номер FROM tig50.dbo.Рейсы WHERE Код = ?";
 $Core->query_params = array($haul);
 $rows = $Core->PDO();
- 
+
 while($hauls = $rows->fetch()){
     $haul_num = $hauls['Номер'];
 }
-
-$Core->query = "SELECT files.* FROM srv.dbo.files files".QUERY_SPACE;
+$i = 0; 
+$Core->query = "SELECT files.name,files.file_stream FROM srv.dbo.files files".QUERY_SPACE;
 $Core->query .= "INNER JOIN srv.dbo.files files_folder ON files_folder.name = 'ft_ex_docs' AND files.parent_path_locator = files_folder.path_locator".QUERY_SPACE;
 $Core->query .= "INNER JOIN srv.dbo.files files_rowid ON files_folder.parent_path_locator = files_rowid.path_locator".QUERY_SPACE;
 $Core->query .= "INNER JOIN tig50_view.dbo.Форма_заказы З ON files_rowid.name = cast(З.Код as nvarchar(max))".QUERY_SPACE;
-$Core->query .= "WHERE files.is_directory = 0 AND З.Удалено = 0 AND З.Рейсы_код = ?";
+$Core->query .= "WHERE files.is_directory = 0 AND З.Удалено = 0 AND З.Рейсы_код = ? and".QUERY_SPACE;
+$Core->query .= "((left(files.name,3) in ('ex_','t1_')) OR (left(files.name,4) = 'inv_'))";
 $Core->query_params = array($haul);
 $rows = $Core->PDO(array('global_db'=>true));
 
+$filename = $haul_num.'.zip';
 $zip = new ZipArchive();
-$zip->open($haul_num.'.zip', ZipArchive::CREATE|ZipArchive::OVERWRITE);
+$zip->open(UPLOAD_DIR.$filename, ZipArchive::CREATE|ZipArchive::OVERWRITE);
 
 while($file = $rows->fetch()){
-	$a = (str_starts_with($file['name'],'ex_'))||(str_starts_with($file['name'],'t1_'))||(str_starts_with($file['name'],'inv_'));
-	if ($a === true) 
+	//$a = (str_starts_with($file['name'],'ex_'))||(str_starts_with($file['name'],'t1_'))||(str_starts_with($file['name'],'inv_'));
+	//if ($a === true) 
     	$zip->addFromString($file['name'], $file['file_stream']);
+        $i++;
 }
+//$zip->addEmptyDir('t');
+//ob_end_flush();
 $zip->close();
 
-ob_end_clean();
+
  
-$file = $haul_num.'.zip';
+
 /*
 header('Content-Description: File Transfer');
 header('Content-Type: application/octet-stream');
@@ -71,8 +76,8 @@ if ($fd = fopen($file, 'rb')) {
 */
 
 header('Content-type: application/zip');
-header('Content-Disposition: attachment; filename="'.$file.'"');
-readfile($file);
-unlink($file);
+header('Content-Disposition: attachment; filename="'.$filename.'"');
+readfile(UPLOAD_DIR.$filename);
+unlink(UPLOAD_DIR.$filename);
 
 ?>

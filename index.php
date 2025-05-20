@@ -1,4 +1,5 @@
 <?php
+// echo '1'; exit;
 require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/core/classes/onload.php';
 new onload($Core);
@@ -14,6 +15,7 @@ new onload($Core);
 <body>
 
 <?php
+// phpinfo();
 if($User->user_name === 'new'){
 	$Site->render_tmpl(TEMPLATES_CORE_DIR.'new_user_menu.php');
 }else{

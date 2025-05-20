@@ -25,7 +25,9 @@ $mail_init['text'] = $row['Текст'];
 $mail_init['theme'] = $row['Тема'];
 $mail_init['lang'] = $row['Язык'];
 
-if(isset($Site->req_data['Фабрики_Код']))
+
+/*
+if(isset($Site->req_data['formatted_data']['Фабрики_Код']))
 {
 	$Core->query = "SELECT Email FROM Контрагенты_контакты WHERE Контрагенты_Код = ?";
 	$Core->query_params = array($Site->req_data['formatted_data']['Фабрики_Код']);
@@ -43,10 +45,20 @@ else
 		$mail_init['to'] = 'Почта не указана';
 }
 
-
+*/
 
 switch ($mail_id)
 {
+	case 38:
+	case 70:
+		$Core->query = "SELECT Email FROM Контрагенты_контакты WHERE Контрагенты_Код = ?";
+		$Core->query_params = array($Site->req_data['formatted_data']['Фабрики_Код']);
+		$mail_init['to'] = $Core->PDO()->fetchColumn();
+		if(empty($mail_init['to']))
+			$mail_init['to'] = 'Почта не указана';
+		else
+			$mail_init['to'] = str_replace(';',',',$mail_init['to']);
+		break;
 	case 55:
 		$mail_init['to'] = '';
 		$Core->query = "SELECT files.* FROM srv.dbo.files files".QUERY_SPACE;
@@ -74,6 +86,8 @@ switch ($mail_id)
 			$mail_init['text'] .= ++$i.". ".$row['name']."\n\n";
 		break;
 	case 57:
+	case 77:
+	case 78:
 		$Core->query = "SELECT Email FROM Клиенты К INNER JOIN Контрагенты_Контакты Кк ON Кк.Контрагенты_Код = К.Код WHERE К.Код = ?";
 		$Core->query_params = array($Site->req_data['formatted_data']['Клиенты_Код']);
 		$mail_init['to'] = $Core->PDO()->fetchColumn();
@@ -86,18 +100,22 @@ switch ($mail_id)
 	default:
 		break;
 }
+//print_pre($Site->req_data);
 
 $init_strings = array();
 $replace_strings = array();
 foreach ($mail_init as $key => $value)
 {
-	preg_match_all('/\%.*\%/', $value,$matches,PREG_OFFSET_CAPTURE);
+	//preg_match_all('/\%.*\%/', $value,$matches,PREG_OFFSET_CAPTURE);
+	preg_match_all('/%[^%\s]*%/', $value,$matches,PREG_OFFSET_CAPTURE);
 	if(count($matches[0]) > 0)
 	{
 		foreach ($matches[0] as $key_ => $value_)
 		{
 			$match_len = strlen($value_[0]);
 			$match_trim = substr($value_[0], 1, -1);
+			//print_pre($value_[0]).'<br>';
+			//foreach ($Site->req_data['formatted_data'] as $key__ => $values__)
 			foreach ($Site->req_data as $key__ => $values__)
 			{
 				if($key__ == $match_trim)

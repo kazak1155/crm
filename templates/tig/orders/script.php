@@ -1,4 +1,4 @@
-<?php include_once "barcode.php"; ?>
+<?php //include_once "barcode.php"; ?>
 <script type="text/javascript">
 $(function() {
 	new jqGrid$({
@@ -206,12 +206,49 @@ $(function() {
 					rowObject['formatted_data'] = new Object();
 					rowObject['formatted_data']['Клиенты_Код'] = rowObjectFormatted['Клиенты_Код'];
 					rowObject['formatted_data']['Фабрики_Код'] = rowObjectFormatted['Фабрики_Код'];
+					rowObject['formatted_data']['Номер_Заказа'] = rowObjectFormatted['Номер_Заказа'];
 					gridPseudo.plugin({
 						frame_type:'email',
 						dialogClassName:'email-dialog',
 						id:rowid,
 						data:rowObject,
-						dialog_refresh_grid:true
+						dialog_refresh_grid:false
+					});
+				}
+			},
+			mail_client_courier:{
+				name:'Заказ отдан курьеру',
+				disabled:function(name,other)
+				{
+					var sel_id = $(this)[0].p.selrow;
+					var sel_row = $(this).getRowData(sel_id);
+					if((sel_row['Транспортника_Код'] =='') || (sel_row['Транспортника_Код'] == 'NULL'))
+						return true;
+				},
+				icon: function(opt, $itemElement, itemKey, item)
+				{
+					return 'context-menu-icon-fa fa-envelope';
+				},
+				custom_callback:function(e,rowid,val,cellName,options,rowObject,gridPseudo,rowObjectFormatted)
+				{
+					var sel_id = $(this)[0].p.selrow;
+					var sel_row = $(this).getRowData(sel_id);
+					mail_id = 78;
+
+					rowObject['mail_id'] = mail_id;
+					rowObject['formatted_data'] = new Object();
+					rowObject['formatted_data']['Клиенты_Код'] = rowObjectFormatted['Клиенты_Код'];
+					rowObject['formatted_data']['Фабрика'] = rowObjectFormatted['Фабрика'];
+					rowObject['formatted_data']['Фабрики_Код'] = rowObjectFormatted['Фабрики_Код'];
+					rowObject['formatted_data']['Номер_Заказа'] = rowObjectFormatted['Номер_Заказа'];
+					rowObject['formatted_data']['Транспортник'] = rowObjectFormatted['Транспортник'];
+					rowObject['formatted_data']['Транспортника_Код'] = rowObjectFormatted['Транспортника_Код'];
+					gridPseudo.plugin({
+						frame_type:'email',
+						dialogClassName:'email-dialog',
+						id:rowid,
+						data:rowObject,
+						dialog_refresh_grid:false
 					});
 				}
 			},
@@ -230,15 +267,16 @@ $(function() {
 						},
 						custom_callback:function(e,rowid,val,cellName,options,rowObject,gridPseudo,rowObjectFormatted)
 						{
-							rowObject['mail_id'] = 57;
-							rowObject['formatted_data'] = rowObjectFormatted;
+							rO = new Object();
+							rO['mail_id'] = 57;
+							rO['formatted_data'] = rowObjectFormatted;
 							gridPseudo.plugin({
 								frame_type:'email',
                                 dialog_height:650,
 								dialogClassName:'email-dialog',
 								id:rowid,
-								data:rowObject,
-								dialog_refresh_grid:true
+								data:rO,
+								dialog_refresh_grid:false
 							});
 						}
 					},
@@ -265,7 +303,7 @@ $(function() {
 								dialogClassName:'email-dialog',
 								id:rowid,
 								data:rowObject,
-								dialog_refresh_grid:true
+								dialog_refresh_grid:false
 							});
 						}
 					}
@@ -496,6 +534,8 @@ $(function() {
 			{caption:'Удаленные',data:{field:"Удалено",op:"ne",data:"0",perm:true}},
 			{caption:'Архив',data:{field:"Статус_Код",op:"ge",data:"0",perm:true}},
 			{caption:'Не Trasporter',data:{field:"Клиенты_Код",op:"ne",data:"150",perm:true}},
+			{caption:'Не Int.Market',data:{field:"Клиенты_Код",op:"ne",data:"61298",perm:true}},
+			{caption:'Не Италия',data:{field:["Фабрика_Страна","Заявка_на_инсклад"],op:['ne','eq'],data:["ITA","1"],groupOps:'AND',perm:true}},
 			//{caption:'Не A-Pan',data:{field:"Клиенты_Код",op:"ne",data:"8429",perm:true}},
 			{caption:'Без рейса', data:{field:"Рейсы_Код",op:"isNull",perm:true}}
 		],
@@ -618,10 +658,10 @@ $(function() {
 		],
 		navGrid:true,
 		cn:[
-			"Код","Цвет","Рейс","Статус","Клиент","ПодКлиент","Фабрика","Склад доставки","Заказ","ex_it","Примечание для курьера","Д.ПолучЗаявки","Д.Готовности","Д.ИнСклад","Объем","Вес","Мест",
-			"На инсклад","Дост.фабрикой","Доки","Перевозчик","Ин.склад","Страна","Квадрат","Тариф Европа","Тариф Россия","Агент заказа","Удалено","Примечание","ex","Сбор_на_инсклад","Примечание-Д","Примечание: Cостав заказа","Примечание пакинг",
+			"Код","Цвет","Рейс","Статус","Клиент","ПодКлиент","Фабрика","Склад доставки","Заказ","ex_it","Нужна_EX","Примечание для курьера","Д.ПолучЗаявки","Д.Готовности","Д.ИнСклад","Объем","Вес","Мест",
+			"На инсклад","Дост.фабрикой","Доки","Перевозчик","Ин.склад","Страна","Квадрат","Тариф Европа","Тариф Россия","Агент заказа","Удалено","Примечание","ex","Сбор_на_инсклад","Примечание-Д","Примечание_Д_курьер","Примечание: Cостав заказа","Примечание пакинг",
 			"Дата изм.статуса","Дата оплаты","ИнСклад ШтрихКод","Весь состав","ШК_Печатался","Пакинг Мест","Объем ИнСклад","Пакинг Вес","РФ Объем","Контрагент отгрузки","Импортер","Регион отгрузки",
-			"<i class='fa fa-lg fa-exclamation-triangle'></i>","Состав_Мест","Состав_Объем","Состав_Вес","MRN","Номер Инвойса","Сумма Инвойса", "Подклиент_Текст","Ex_Files","Контакт","Телефон","Email"
+			"<i class='fa fa-lg fa-exclamation-triangle'></i>","Состав_Мест","Состав_Объем","Состав_Вес","MRN","Номер Инвойса","Сумма Инвойса", "Подклиент_Текст","Ex_Files","Контакт","Телефон","Email","Фабрика","Транспортник"
 		],
 		cm:[
 			{
@@ -789,6 +829,12 @@ $(function() {
 			},
 			{
 				name: "ex_it",index:"ex_it",width:30,gtype:'checkbox',stype:'select',
+				searchoptions:{
+					width:30,value: ":;1:Да;0:Нет",dataInit:dataSelect2
+				}
+			},
+			{
+				name: "Нужна_EX",index:"Нужна_EX",width:30,gtype:'checkbox',stype:'select',
 				searchoptions:{
 					width:30,value: ":;1:Да;0:Нет",dataInit:dataSelect2
 				}
@@ -990,7 +1036,11 @@ $(function() {
 				cellattr:textAreaCellAttr,
 				edittype:'textarea',editoptions:{rows:'1',dataInit:textAreaHeight}
 			},
-
+			{
+				name: "Примечание_Д_Курьер",index:"Примечание_Д_Курьер",width:150,align:"left",
+				cellattr:textAreaCellAttr,
+				edittype:'textarea',editoptions:{rows:'1',dataInit:textAreaHeight}
+			},
 			{
 				name: "Примечание_состав",index:"Примечание_состав",hidden:true,hidedlg:true,width:150,align:"left",addformeditable:true,
 				cellattr:textAreaCellAttr,
@@ -1125,7 +1175,13 @@ $(function() {
 				name: "Телефон",index:"Телефон",width:70,editable:false
 			},	
 			{
-				name: "Email",index:"Email",width:70,editable:false
+				name: "Email",index:"Email",width:70
+			},	
+			{
+				name: "Фабрика",index:"Фабрика",hidden:true,width:70,editable:false
+			},
+			{
+				name: "Транспортник",index:"Транспортник",hidden:true,width:70,editable:false
 			}
 		],
 		options:{
