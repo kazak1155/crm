@@ -1,9 +1,9 @@
 <?php
-define('WWW_ROOT','http://'.$_SERVER['SERVER_NAME']);
+define(constant_name: 'WWW_ROOT',value: 'http://'.$_SERVER['SERVER_NAME']);
 
-define('DS',DIRECTORY_SEPARATOR);
+define(constant_name: 'DS',value: DIRECTORY_SEPARATOR);
 
-define('CRM_ROOT',dirname(dirname(__FILE__)).DS);
+define(constant_name: 'CRM_ROOT',value: dirname(path: dirname(path: __FILE__)).DS);
 
 define('CORE_DIR',CRM_ROOT.'core'.DS);
 
